@@ -66,14 +66,13 @@ public class TheatreDemo {
     private static void createShow() {
         Actor actor1 = new Actor("Иван", "Иванов", Gender.MALE, 178);
         Actor actor2 = new Actor("Мария", "Мариевна", Gender.FEMALE, 165);
-        Actor actor3 = new Actor("Алексей", "Алексее", Gender.MALE, 182);
+        Actor actor3 = new Actor("Алексей", "Алексеев", Gender.MALE, 182);
         Actor actor4 = new Actor("Ольга", "Ольгина", Gender.FEMALE, 170);
         Actor actor5 = new Actor("Дмитрий", "Дмитриев", Gender.MALE, 175);
 
         Director director1 = new Director("Вацлав", "Рейзингер", Gender.MALE, 12);
         Director director2 = new Director("Густав", "Малер", Gender.MALE, 8);
         Director director3 = new Director("Константин", "Станиславский", Gender.MALE, 30);
-
 
         ArrayList<Actor> actorsForShow = new ArrayList<>();
         actorsForShow.add(actor1);
@@ -105,7 +104,6 @@ public class TheatreDemo {
                 "Марис Лиепа");
         allShows.add(ballet);
         musicalShows.add(ballet);
-
     }
 
     private static void printLibretto(Scanner scanner) {
@@ -167,21 +165,18 @@ public class TheatreDemo {
                 System.out.print("Режиссёр: ");
                 selectedShow.printDirectorInfo();
 
-                // Для музыкальных спектаклей
                 if (musicalShows.contains(selectedShow)) {
                     MusicalShow musicalShow = (MusicalShow) selectedShow;
-                    System.out.println("Автор музыки: " + musicalShow.musicAuthor);
+                    System.out.println("Автор музыки: " + musicalShow.getMusicAuthor());
 
-                    // Для балета выводим хореографа
                     if (selectedShow instanceof Ballet) {
                         Ballet ballet = (Ballet) selectedShow;
-                        System.out.println("Хореограф: " + ballet.choreographer);
+                        System.out.println("Хореограф: " + ballet.getChoreographer());
                     }
 
-                    // Для оперы выводим размер хора
                     if (selectedShow instanceof Opera) {
                         Opera opera = (Opera) selectedShow;
-                        System.out.println("Размер хора: " + opera.choirSize);
+                        System.out.println("Размер хора: " + opera.getChoirSize());
                     }
                 }
 
@@ -203,7 +198,6 @@ public class TheatreDemo {
             return;
         }
 
-        // Проходим по всем спектаклям и выводим актеров для каждого
         for (Show show : allShows) {
             System.out.println("СПЕКТАКЛЬ: " + show.title);
             System.out.println("Актёры:");
@@ -213,7 +207,6 @@ public class TheatreDemo {
 
         System.out.println("=============================");
     }
-
 
     private static Actor inputActor(Scanner scanner) {
         System.out.println("Введите данные актера:");
@@ -250,7 +243,6 @@ public class TheatreDemo {
     private static void addNewActor(Scanner scanner) {
         System.out.println("=== ДОБАВЛЕНИЕ НОВОГО АКТЁРА ===\n");
 
-        // Выбор спектакля для добавления актера
         System.out.println("Выберите спектакль для добавления актера:");
         for (int i = 0; i < allShows.size(); i++) {
             Show show = allShows.get(i);
@@ -268,10 +260,7 @@ public class TheatreDemo {
 
         Show selectedShow = allShows.get(showIndex);
 
-        // Ввод  нового актера
         Actor newActor = inputActor(scanner);
-
-        // Добавляем актера
         selectedShow.addActor(newActor);
         System.out.println("Новый актер " + newActor + " добавлен в спектакль '" + selectedShow.title + "'");
     }
@@ -284,7 +273,6 @@ public class TheatreDemo {
             return;
         }
 
-        // Выбор спектакля, в котором будем заменять актера
         System.out.println("Выберите спектакль, в котором нужно заменить актера:");
         for (int i = 0; i < allShows.size(); i++) {
             Show show = allShows.get(i);
@@ -302,31 +290,28 @@ public class TheatreDemo {
 
         Show selectedShow = allShows.get(showIndex);
 
-        // Выбор актера для замены
-        System.out.println("\nВыберите актера для замены в спектакле '" + selectedShow.title + "':");
-        for (int i = 0; i < selectedShow.listOfActors.size(); i++) {
-            Actor actor = selectedShow.listOfActors.get(i);
-            System.out.println((i + 1) + ". " + actor);
-        }
+        System.out.println("\nВыберите способ поиска актера для замены:");
+        System.out.println("1. По фамилии");
+        System.out.println("2. По имени и фамилии");
+        System.out.print("Введите номер способа: ");
 
-        System.out.print("Введите номер актера: ");
-        int actorIndex = scanner.nextInt() - 1;
+        int searchType = scanner.nextInt();
         scanner.nextLine();
 
-        if (actorIndex < 0 || actorIndex >= selectedShow.listOfActors.size()) {
-            System.out.println("Неверный выбор актера");
-            return;
-        }
-
-        Actor actorToRemove = selectedShow.listOfActors.get(actorIndex);
-
-        // Ввод данных нового актера
         Actor newActor = inputActor(scanner);
 
-        // Заменяем актера
-        selectedShow.listOfActors.set(actorIndex, newActor);
-
-        System.out.println("\nАктер " + actorToRemove + " заменен на актера " + newActor);
-        System.out.println("в спектакле '" + selectedShow.title + "'");
+        if (searchType == 1) {
+            System.out.print("Введите фамилию актера, которого нужно заменить: ");
+            String lastName = scanner.nextLine();
+            selectedShow.replaceActor(newActor, lastName);
+        } else if (searchType == 2) {
+            System.out.print("Введите имя актера, которого нужно заменить: ");
+            String firstName = scanner.nextLine();
+            System.out.print("Введите фамилию актера, которого нужно заменить: ");
+            String lastName = scanner.nextLine();
+            selectedShow.replaceActor(newActor, firstName, lastName);
+        } else {
+            System.out.println("Неверный выбор способа поиска.");
+        }
     }
 }
